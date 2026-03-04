@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KOALA KW | متجر كوالا الكويت</title>
+    <title>KOALA KW | متجر بني كوالا </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -47,7 +47,7 @@
 <div class="hero text-center">
     <div class="container">
         <h1 class="display-5 fw-bold">إصدارات كوالا المحدودة 🇰🇼</h1>
-        <p class="lead">دمى كوالا فاخرة بملابس الشخصيات - توصيل سريع لجميع مناطق الكويت</p>
+        <p class="lead">دمى كوالا الفاخره - توصيل سريع لجميع مناطق الكويت</p>
     </div>
 </div>
 
