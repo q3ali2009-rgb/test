@@ -1,264 +1,119 @@
-# test
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر GamesZone | للألعاب الإلكترونية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <title>المتجر الرسمي للألعاب | Official Game Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #833ab4;
-            --secondary: #fd1d1d;
-            --dark: #0f0f0f;
-            --card-bg: #1a1a1a;
-            --text: #ffffff;
-        }
-
-        body {
-            font-family: 'Cairo', sans-serif;
-            background-color: var(--dark);
-            color: var(--text);
-            margin: 0;
-            padding: 0;
-        }
-
-        /* الهيدر */
-        header {
-            background: rgba(0,0,0,0.9);
-            padding: 15px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 2px solid var(--primary);
-        }
-
-        .logo { font-size: 24px; font-weight: bold; color: var(--primary); }
-
-        .cart-icon {
-            cursor: pointer;
-            position: relative;
-            background: var(--primary);
-            padding: 8px 15px;
-            border-radius: 5px;
-        }
-
-        #cart-count {
-            background: white;
-            color: black;
-            border-radius: 50%;
-            padding: 2px 7px;
-            font-size: 12px;
-            margin-right: 5px;
-        }
-
-        /* شبكة الألعاب */
-        .container {
-            padding: 40px 5%;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 25px;
-        }
-
-        .game-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            overflow: hidden;
-            transition: 0.3s;
-            border: 1px solid #333;
-        }
-
-        .game-card:hover { transform: translateY(-10px); border-color: var(--primary); }
-
-        .game-img {
-            width: 100%;
-            height: 200px;
-            background: #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-        }
-
-        .game-info { padding: 15px; text-align: center; }
-
-        .price { color: var(--secondary); font-weight: bold; font-size: 20px; }
-
-        .add-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-            font-family: 'Cairo';
-        }
-
-        /* السلة وبوابة الدفع */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            margin: 5% auto;
-            padding: 30px;
-            width: 90%;
-            max-width: 500px;
-            border-radius: 15px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #333;
-        }
-
-        .checkout-form input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            background: #333;
-            border: 1px solid #444;
-            color: white;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        .pay-btn {
-            background: #2ecc71;
-            color: white;
-            border: none;
-            padding: 15px;
-            width: 100%;
-            font-size: 18px;
-            cursor: pointer;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-
-        .close { float: left; cursor: pointer; font-size: 28px; }
+        body { font-family: 'Noto Kufi Arabic', sans-serif; background-color: #f8f9fa; }
+        .navbar { background-color: #1a1d20; }
+        .game-card { border: none; border-radius: 12px; transition: 0.3s; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .game-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .btn-primary { background-color: #0d6efd; border: none; padding: 10px 25px; border-radius: 8px; }
+        .cart-badge { position: absolute; top: -5px; right: -10px; background: #ffc107; color: #000; border-radius: 50%; padding: 2px 6px; font-size: 12px; }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo">GAMES ZONE 🎮</div>
-    <div class="cart-icon" onclick="toggleCart()">
-        🛒 السلة <span id="cart-count">0</span>
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="#">GAME STORE</a>
+        <button class="btn btn-outline-light position-relative" data-bs-toggle="offcanvas" data-bs-target="#cartSidebar">
+            السلة 🛒
+            <span class="cart-badge" id="cartCount">0</span>
+        </button>
     </div>
-</header>
+</nav>
 
-<div class="container" id="products-grid">
+<div class="bg-dark text-white text-center py-5 mb-5">
+    <h1 class="display-4 fw-bold">أحدث الألعاب الرقمية</h1>
+    <p class="lead">تسليم فوري وآمن 100%</p>
+</div>
+
+<div class="container">
+    <div class="row g-4" id="gamesContainer">
+        </div>
+</div>
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="cartSidebar">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title">سلة المشتريات</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
     </div>
-
-<div id="cartModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="toggleCart()">&times;</span>
-        <h2>سلة المشتريات 🛍️</h2>
-        <div id="cart-items"></div>
-        <hr>
-        <h3>إجمالي: <span id="total-price">0</span> ريال</h3>
-        
-        <div class="checkout-form">
-            <h4>بوابة دفع آمنة 💳</h4>
-            <input type="text" placeholder="اسم حامل البطاقة">
-            <input type="text" placeholder="رقم البطاقة (16 رقم)">
-            <div style="display:flex; gap:10px;">
-                <input type="text" placeholder="MM/YY">
-                <input type="text" placeholder="CVV">
-            </div>
-            <button class="pay-btn" onclick="processPayment()">إتمام الدفع الآن</button>
+    <div class="offcanvas-body">
+        <div id="cartItems"></div>
+        <div class="mt-4 border-top pt-3">
+            <h5>الإجمالي: <span id="cartTotal">0</span> ريال</h5>
+            <button class="btn btn-success w-100 mt-3 py-3 fw-bold" onclick="goToCheckout()">الانتقال للدفع الآمن</button>
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const games = [
-        { id: 1, name: "Elden Ring", price: 250, icon: "⚔️" },
-        { id: 2, name: "FIFA 24", price: 290, icon: "⚽" },
-        { id: 3, name: "GTA V", price: 120, icon: "🚗" },
-        { id: 4, name: "Spider-Man 2", price: 280, icon: "🕷️" },
-        { id: 5, name: "Minecraft", price: 90, icon: "🧱" },
-        { id: 6, name: "Resident Evil 4", price: 200, icon: "🧟" },
-        { id: 7, name: "Call of Duty", price: 300, icon: "🔫" },
-        { id: 8, name: "God of War", price: 240, icon: "🪓" },
-        { id: 9, name: "Red Dead 2", price: 180, icon: "🤠" },
-        { id: 10, name: "Cyberpunk 2077", price: 150, icon: "🤖" }
+        { id: 1, name: "Elden Ring: Shadow of the Erdtree", price: 150, img: "https://placehold.co/400x500/1a1d20/white?text=Elden+Ring" },
+        { id: 2, name: "FC 24 Ultimate Edition", price: 299, img: "https://placehold.co/400x500/1a1d20/white?text=FC+24" },
+        { id: 3, name: "GTA V Premium Edition", price: 80, img: "https://placehold.co/400x500/1a1d20/white?text=GTA+V" },
+        { id: 4, name: "Spider-Man 2 PS5", price: 250, img: "https://placehold.co/400x500/1a1d20/white?text=Spider-Man" },
+        { id: 5, name: "Minecraft Java Edition", price: 95, img: "https://placehold.co/400x500/1a1d20/white?text=Minecraft" },
+        { id: 6, name: "Resident Evil 4 Remake", price: 180, img: "https://placehold.co/400x500/1a1d20/white?text=RE+4" },
+        { id: 7, name: "Call of Duty: Modern Warfare III", price: 280, img: "https://placehold.co/400x500/1a1d20/white?text=COD+MW3" },
+        { id: 8, name: "God of War Ragnarok", price: 220, img: "https://placehold.co/400x500/1a1d20/white?text=God+of+War" },
+        { id: 9, name: "Red Dead Redemption 2", price: 110, img: "https://placehold.co/400x500/1a1d20/white?text=RDR+2" },
+        { id: 10, name: "Cyberpunk 2077: Ultimate", price: 140, img: "https://placehold.co/400x500/1a1d20/white?text=Cyberpunk" }
     ];
 
-    let cart = [];
+    let cart = JSON.parse(localStorage.getItem('myCart')) || [];
 
-    // عرض الألعاب
-    const grid = document.getElementById('products-grid');
-    games.forEach(game => {
-        grid.innerHTML += `
-            <div class="game-card">
-                <div class="game-img">${game.icon}</div>
-                <div class="game-info">
-                    <h3>${game.name}</h3>
-                    <p class="price">${game.price} ريال</p>
-                    <button class="add-btn" onclick="addToCart(${game.id})">إضافة للسلة</button>
+    function renderGames() {
+        const container = document.getElementById('gamesContainer');
+        container.innerHTML = games.map(game => `
+            <div class="col-md-3 col-6">
+                <div class="card game-card h-100">
+                    <img src="${game.img}" class="card-img-top p-2" alt="${game.name}">
+                    <div class="card-body text-center">
+                        <h6 class="card-title fw-bold">${game.name}</h6>
+                        <p class="text-danger fw-bold">${game.price} ر.س</p>
+                        <button class="btn btn-primary btn-sm" onclick="addToCart(${game.id})">أضف للسلة</button>
+                    </div>
                 </div>
             </div>
-        `;
-    });
+        `).join('');
+    }
 
     function addToCart(id) {
         const game = games.find(g => g.id === id);
         cart.push(game);
-        updateCartUI();
-        alert(`تم إضافة ${game.name} للسلة!`);
+        saveCart();
+        updateUI();
     }
 
-    function updateCartUI() {
-        document.getElementById('cart-count').innerText = cart.length;
-        const cartItems = document.getElementById('cart-items');
-        const totalSpan = document.getElementById('total-price');
-        
-        cartItems.innerHTML = "";
+    function updateUI() {
+        document.getElementById('cartCount').innerText = cart.length;
+        const cartItems = document.getElementById('cartItems');
         let total = 0;
-        
-        cart.forEach((item, index) => {
+        cartItems.innerHTML = cart.map((item, index) => {
             total += item.price;
-            cartItems.innerHTML += `
-                <div class="cart-item">
-                    <span>${item.name}</span>
-                    <span>${item.price} ريال</span>
-                </div>
-            `;
-        });
-        totalSpan.innerText = total;
+            return `<div class="d-flex justify-content-between mb-2"><span>${item.name}</span><b>${item.price}</b></div>`;
+        }).join('');
+        document.getElementById('cartTotal').innerText = total;
     }
 
-    function toggleCart() {
-        const modal = document.getElementById('cartModal');
-        modal.style.display = (modal.style.display === "block") ? "none" : "block";
+    function saveCart() {
+        localStorage.setItem('myCart', JSON.stringify(cart));
     }
 
-    function processPayment() {
-        if (cart.length === 0) {
-            alert("السلة فارغة!");
-            return;
-        }
-        alert("جاري التحقق من البطاقة... تم الدفع بنجاح! شكراً لشرائك.");
-        cart = [];
-        updateCartUI();
-        toggleCart();
+    function goToCheckout() {
+        if(cart.length === 0) return alert("السلة فارغة");
+        // هنا يتم توجيه المستخدم لصفحة الدفع الحقيقية
+        alert("سيتم توجيهك الآن إلى بوابة الدفع الآمنة (Stripe/PayTabs)");
     }
+
+    renderGames();
+    updateUI();
 </script>
-
 </body>
 </html>
