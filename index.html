@@ -2,60 +2,125 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>AI Scholar - مساعد الطالب</title>
+    <title>AI Scholar - الديوانية الذكية</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>@import url('https://fonts.googleapis.com/css2?family=Cairo&display=swap'); body { font-family: 'Cairo', sans-serif; }</style>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; }
+        .kashka-glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+        .gradient-text { background: linear-gradient(90deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    </style>
 </head>
-<body class="bg-slate-900 text-white h-screen flex flex-col">
-    <header class="p-4 bg-slate-800 flex justify-between items-center shadow-md">
-        <h1 class="text-xl font-bold text-blue-400">AI Scholar 🎓</h1>
-        <button id="startBtn" class="bg-blue-600 px-6 py-2 rounded-full font-bold hover:bg-blue-700 transition">بدء تسجيل الأستاذ</button>
-    </header>
+<body class="text-slate-200 min-h-screen flex items-center justify-center overflow-hidden">
 
-    <div class="flex flex-1 p-4 gap-4 overflow-hidden">
-        <div class="flex-[2] bg-slate-800/50 rounded-2xl p-6 border border-slate-700 overflow-y-auto">
-            <h2 class="text-slate-400 text-sm mb-4">نص المحاضرة المباشر:</h2>
-            <p id="output" class="text-xl leading-relaxed">اضغط على الزر بالأعلى لبدء تسجيل كلام الأستاذ...</p>
+    <div id="loginSection" class="z-50 text-center p-10 kashka-glass rounded-[2rem] shadow-2xl w-[450px]">
+        <div class="text-6xl mb-6">🇰🇼</div>
+        <h1 class="text-3xl font-black mb-2 gradient-text">هلا بالزين!</h1>
+        <p class="text-slate-400 mb-8 font-medium">سجل الباسورد عشان تبطل الديوانية</p>
+        <input id="pw" type="password" placeholder="كلمة السر يالحبيب..." class="w-full bg-slate-900/50 border border-slate-700 rounded-2xl p-4 mb-4 text-center focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+        <button onclick="checkAccess()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg transition-transform active:scale-95">دخول</button>
+        <p id="err" class="text-red-400 mt-4 text-sm hidden">يالحبيب الباسورد غلط، ركز!</p>
+    </div>
+
+    <div id="menuSection" class="hidden z-40 text-center space-y-8">
+        <h2 class="text-4xl font-black gradient-text">آمر تدلل.. شنو تبي تسوي؟</h2>
+        <div class="flex gap-8 mt-10">
+            <div onclick="showView('recordView')" class="kashka-glass p-8 rounded-[2.5rem] w-72 cursor-pointer hover:scale-105 transition-all hover:border-blue-500 group">
+                <div class="text-5xl mb-4 group-hover:animate-bounce">🎤</div>
+                <h3 class="text-xl font-bold mb-2">تسجيل الأستاذ</h3>
+                <p class="text-sm text-slate-400">خل الذكاء يكتب وراك</p>
+            </div>
+            <div onclick="showView('chatView')" class="kashka-glass p-8 rounded-[2.5rem] w-72 cursor-pointer hover:scale-105 transition-all hover:border-purple-500 group">
+                <div class="text-5xl mb-4 group-hover:animate-bounce">💬</div>
+                <h3 class="text-xl font-bold mb-2">أسأل AI</h3>
+                <p class="text-sm text-slate-400">استفسر عن اللي بخاطرك</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="mainApp" class="hidden fixed inset-0 flex flex-col p-6 h-full w-full">
+        <button onclick="goHome()" class="fixed right-6 top-6 z-50 bg-slate-800 p-3 rounded-2xl border border-slate-700 hover:bg-slate-700 transition shadow-xl" title="الرجوع للقائمة">
+            🏠 القائمة
+        </button>
+
+        <div id="recordView" class="hidden flex-1 flex flex-col space-y-4 pt-16">
+            <div class="flex justify-between items-center bg-slate-800/50 p-6 rounded-3xl border border-slate-700">
+                <div>
+                    <h3 class="text-xl font-bold">تسجيل كلام الأستاذ 🎙️</h3>
+                    <p id="status" class="text-sm text-slate-400">قواك الله.. اضغط الزر وبلش</p>
+                </div>
+                <button id="micBtn" class="bg-blue-600 px-8 py-3 rounded-full font-bold shadow-lg hover:bg-blue-700 transition-all">بدء التسجيل</button>
+            </div>
+            <div class="flex-1 bg-slate-900/50 rounded-[2rem] p-8 border border-slate-800 overflow-y-auto shadow-inner">
+                <p id="transcript" class="text-2xl leading-relaxed text-slate-300 italic opacity-50">هني راح يطلع الكلام.. ناطرينك..</p>
+            </div>
         </div>
 
-        <div class="flex-1 bg-slate-800 rounded-2xl border border-slate-700 flex flex-col shadow-xl">
-            <div class="p-4 border-b border-slate-700 font-bold">شات الذكاء الاصطناعي</div>
-            <div id="chat" class="flex-1 p-4 overflow-y-auto space-y-4 text-sm text-slate-300">
-                <div class="bg-slate-700/50 p-3 rounded-lg border border-slate-600">أهلاً! سأقوم بتحليل ما يقوله الأستاذ فوراً.</div>
+        <div id="chatView" class="hidden flex-1 flex flex-col space-y-4 pt-16 max-w-4xl mx-auto w-full">
+            <div class="flex-1 kashka-glass rounded-[2rem] p-6 overflow-y-auto flex flex-col space-y-4 shadow-2xl">
+                <div class="bg-purple-600/20 p-4 rounded-2xl border border-purple-500/30 text-purple-200 ml-auto max-w-[80%]">
+                    هلا بك! شنو اللي مو فاهمه بالمحاضرة؟ أنا حاضر وبالخدمة.
+                </div>
             </div>
-            <div class="p-4 bg-slate-900/50 flex gap-2">
-                <input id="userInput" type="text" placeholder="اسأل عن أي نقطة..." class="flex-1 bg-slate-800 border border-slate-700 rounded-lg p-2 focus:outline-none focus:border-blue-500">
-                <button id="sendBtn" class="bg-blue-600 px-4 py-2 rounded-lg">إرسال</button>
+            <div class="flex gap-2 p-2">
+                <input type="text" placeholder="اكتب سؤالك هني يا بطل..." class="flex-1 bg-slate-800 border border-slate-700 rounded-2xl p-4 outline-none focus:border-purple-500 transition">
+                <button class="bg-purple-600 px-6 rounded-2xl hover:bg-purple-700 transition">إرسال</button>
             </div>
         </div>
     </div>
 
     <script>
-        const startBtn = document.getElementById('startBtn');
-        const output = document.getElementById('output');
-        let recognition;
+        const MY_PASS = "alinasser"; // الباسورد اللي طلبته
 
+        function checkAccess() {
+            const val = document.getElementById('pw').value;
+            if(val === MY_PASS) {
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('menuSection').classList.remove('hidden');
+            } else {
+                document.getElementById('err').classList.remove('hidden');
+            }
+        }
+
+        function showView(viewId) {
+            document.getElementById('menuSection').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            document.getElementById('recordView').classList.add('hidden');
+            document.getElementById('chatView').classList.add('hidden');
+            document.getElementById(viewId).classList.remove('hidden');
+        }
+
+        function goHome() {
+            document.getElementById('mainApp').classList.add('hidden');
+            document.getElementById('menuSection').classList.remove('hidden');
+        }
+
+        // كود التسجيل (Web Speech API)
+        let recognition;
         if ('webkitSpeechRecognition' in window) {
             recognition = new webkitSpeechRecognition();
             recognition.continuous = true;
             recognition.interimResults = true;
             recognition.lang = 'ar-SA';
-
             recognition.onresult = (e) => {
-                let text = Array.from(e.results).map(r => r[0].transcript).join('');
-                output.innerText = text;
+                const text = Array.from(e.results).map(r => r[0].transcript).join('');
+                document.getElementById('transcript').innerText = text;
+                document.getElementById('transcript').classList.remove('opacity-50');
             };
         }
 
-        startBtn.onclick = () => {
-            if (startBtn.innerText.includes("بدء")) {
+        document.getElementById('micBtn').onclick = function() {
+            const btn = this;
+            if (btn.innerText.includes("بدء")) {
                 recognition.start();
-                startBtn.innerText = "🔴 جاري التسجيل...";
-                startBtn.classList.replace('bg-blue-600', 'bg-red-600');
+                btn.innerText = "🔴 وقف التسجيل";
+                btn.classList.replace('bg-blue-600', 'bg-red-600');
+                document.getElementById('status').innerText = "جاري الاستماع.. سجل يا تاريخ!";
             } else {
                 recognition.stop();
-                startBtn.innerText = "بدء تسجيل الأستاذ";
-                startBtn.classList.replace('bg-red-600', 'bg-blue-600');
+                btn.innerText = "بدء التسجيل";
+                btn.classList.replace('bg-red-600', 'bg-blue-600');
+                document.getElementById('status').innerText = "تم الحفظ.. قواك الله";
             }
         };
     </script>
