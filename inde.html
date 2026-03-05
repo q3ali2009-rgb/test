@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>مساعد الطالب الذكي AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>body { font-family: system-ui, -apple-system, sans-serif; }</style>
+</head>
+<body class="bg-slate-900 text-white h-screen flex flex-col">
+    <nav class="p-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
+        <h1 class="text-xl font-bold text-blue-400">AI Scholar 🎓</h1>
+        <button id="startBtn" class="bg-blue-600 px-6 py-2 rounded-full hover:bg-blue-700 transition font-bold shadow-lg shadow-blue-500/20">
+            بدء تسجيل الأستاذ
+        </button>
+    </nav>
+
+    <div class="flex flex-1 p-4 gap-4 overflow-hidden">
+        <div class="flex-[2] bg-slate-800/50 rounded-2xl p-6 border border-slate-700 overflow-y-auto">
+            <h2 class="text-slate-400 text-sm mb-4">كلام الأستاذ (مباشر):</h2>
+            <p id="output" class="text-xl leading-relaxed text-slate-200">بانتظار تفعيل الميكروفون...</p>
+        </div>
+
+        <div class="flex-1 bg-slate-800 rounded-2xl border border-slate-700 flex flex-col shadow-2xl">
+            <div class="p-4 border-b border-slate-700 font-bold text-blue-400">المساعد الذكي</div>
+            <div id="chat" class="flex-1 p-4 overflow-y-auto space-y-4 text-sm text-slate-300">
+                <div class="bg-slate-700/50 p-3 rounded-lg border border-slate-600">أهلاً بك! سأقوم بتحليل كلام الأستاذ والإجابة على استفساراتك هنا.</div>
+            </div>
+            <div class="p-4 bg-slate-900/50 flex gap-2">
+                <input id="userInput" type="text" placeholder="اسأل عن أي شيء..." class="flex-1 bg-slate-800 border border-slate-700 rounded-lg p-3 focus:outline-none focus:border-blue-500 text-white">
+                <button id="sendBtn" class="bg-blue-600 p-3 rounded-lg hover:bg-blue-700">إرسال</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const startBtn = document.getElementById('startBtn');
+        const output = document.getElementById('output');
+        let recognition;
+
+        if ('webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'ar-SA';
+
+            recognition.onresult = (e) => {
+                let text = Array.from(e.results).map(r => r[0].transcript).join('');
+                output.innerText = text;
+            };
+        }
+
+        startBtn.onclick = () => {
+            if (startBtn.innerText.includes("بدء")) {
+                recognition.start();
+                startBtn.innerText = "🔴 جاري التسجيل...";
+                startBtn.classList.replace('bg-blue-600', 'bg-red-600');
+            } else {
+                recognition.stop();
+                startBtn.innerText = "بدء تسجيل الأستاذ";
+                startBtn.classList.replace('bg-red-600', 'bg-blue-600');
+            }
+        };
+    </script>
+</body>
+</html>
