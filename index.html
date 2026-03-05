@@ -3,94 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر كوالا | Koala Store 🐨</title>
+    <title>جزيرة كوالا | Koala Island 🐨🇰🇼</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
-        body { font-family: 'Tajawal', sans-serif; background-color: #fdfcf0; }
-        .sidebar { background: white; border-left: 1px solid #eee; width: 280px; height: 100vh; position: fixed; right: 0; top: 0; z-index: 10; }
-        .main-content { margin-right: 280px; padding: 40px; }
-        .koala-card { transition: 0.3s; background: white; border-radius: 25px; padding: 20px; text-align: center; border: 1px solid #f0f0f0; }
-        .koala-card:hover { transform: translateY(-10px); shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        body { font-family: 'Cairo', sans-serif; background: #e0f7fa; overflow-x: hidden; }
+        .island-section { height: 100vh; width: 100vw; flex-shrink: 0; display: flex; align-items: center; justify-content: center; position: relative; }
+        .koala-floating { animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        .basket-item { animation: dropIn 0.5s ease-out; }
+        @keyframes dropIn { 0% { opacity: 0; transform: translateY(-50px); } 100% { opacity: 1; transform: translateY(0); } }
+        /* تصميم بوابة الدفع كأنها نافذة بنكية */
+        .payment-modal { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
     </style>
 </head>
 <body>
 
-    <div id="lockScreen" class="fixed inset-0 z-[100] bg-[#fff9e6] flex items-center justify-center">
-        <div class="bg-white p-10 rounded-[40px] shadow-2xl text-center max-w-sm w-full border-4 border-amber-100 animate__animated animate__zoomIn">
-            <div class="text-7xl mb-4">🐨</div>
-            <h1 class="text-2xl font-bold text-amber-900 mb-2">يا هلا بالزيّن!</h1>
-            <p class="text-amber-700 mb-6">منوّرنا.. شنو كلمة السر؟</p>
-            <input type="password" id="pwInput" class="w-full p-4 rounded-2xl border-2 border-amber-50 outline-none text-center text-xl mb-4 focus:border-amber-400" placeholder="اكتبها هني">
-            <button onclick="checkPass()" class="w-full bg-amber-500 text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-amber-600 transition">دخول</button>
-            <p id="error" class="text-red-500 mt-4 hidden">أفا.. الباسورد غلط!</p>
+    <div id="lockScreen" class="fixed inset-0 z-[100] bg-[#e0f7fa] flex items-center justify-center p-4">
+        <div class="bg-white/80 p-12 rounded-[50px] shadow-2xl text-center max-w-sm w-full border-8 border-cyan-100 animate__animated animate__jackInTheBox backdrop-blur-md">
+            <div class="text-8xl mb-6">🏝️</div>
+            <h1 class="text-3xl font-bold text-cyan-900 mb-2">حيّاك في الجزيرة!</h1>
+            <p class="text-cyan-700 mb-8">علي، شنو كلمة السر يا الغالي؟</p>
+            <input type="password" id="pwInput" class="w-full p-5 rounded-full bg-cyan-50 border-2 border-cyan-100 outline-none text-center text-xl mb-6 focus:border-cyan-400" placeholder="اكتبها هني">
+            <button onclick="checkPass()" class="w-full bg-cyan-600 text-white py-5 rounded-full font-bold shadow-lg hover:bg-cyan-700 transition active:scale-95 text-xl">دخول الجزيرة</button>
+            <p id="error" class="text-red-500 mt-5 hidden font-bold">أفا.. جرب مرة ثانية!</p>
         </div>
     </div>
 
-    <div id="mainSite" class="hidden opacity-0 transition-opacity duration-500">
-        <aside class="sidebar p-6 shadow-xl">
-            <div class="text-center mb-10">
-                <span class="text-5xl">🐨</span>
-                <h2 class="text-xl font-bold mt-2">كوالا كويت</h2>
+    <div id="cartBasket" class="fixed bottom-10 left-10 z-50 bg-white p-6 rounded-[30px] shadow-2xl border-4 border-cyan-100 flex items-center gap-4 cursor-pointer hover:shadow-cyan-100" onclick="toggleCheckout()">
+        <div class="text-5xl">🛒</div>
+        <div>
+            <div class="text-sm text-gray-400">سلتك</div>
+            <div class="text-2xl font-bold text-cyan-800"><span id="cartCount">0</span> د.ك</div>
+        </div>
+        <div id="cartItemsList" class="hidden absolute bottom-24 left-0 bg-white p-5 rounded-2xl shadow-xl border w-64 space-y-2">
             </div>
-            <nav class="space-y-4">
-                <div class="p-4 bg-amber-50 rounded-2xl text-amber-700 font-bold cursor-pointer">🏠 القائمة الرئيسية</div>
-                <div class="p-4 hover:bg-gray-50 rounded-2xl cursor-pointer">ℹ️ حول المنتج</div>
-                <div class="p-4 hover:bg-gray-50 rounded-2xl cursor-pointer">📦 طلباتي</div>
-                <div class="p-4 hover:bg-gray-50 rounded-2xl cursor-pointer">📞 اتصل بنا</div>
-            </nav>
-        </aside>
+    </div>
 
-        <main class="main-content">
-            <header class="flex justify-between items-center mb-10">
-                <h2 class="text-3xl font-bold">عائلة الكوالا (44 شخصية)</h2>
-                <div class="bg-white px-6 py-3 rounded-2xl shadow-sm font-bold border">
-                    🛒 السلة: <span id="cartCount" class="text-amber-600">0</span>
-                </div>
-            </header>
+    <div id="mainSite" class="hidden h-screen flex overflow-x-auto scroll-smooth">
+        
+        <section class="island-section bg-[#e0f7fa] border-l-4 border-dashed border-cyan-200">
+            <div class="absolute top-10 right-10 flex items-center gap-2">
+                <span class="text-4xl">🐨</span>
+                <span class="text-xl font-bold">جزيرة كوالا <span class="text-xs text-cyan-500">علي ناصر</span></span>
+            </div>
+            <div class="text-center animate__animated animate__fadeIn">
+                <div class="text-9xl mb-10 koala-floating">🧑‍✈️</div>
+                <h2 class="text-4xl font-bold mb-4">قسم الطيران</h2>
+                <p class="text-cyan-800 mb-8 max-w-md mx-auto">استكشف مجموعة الكوالا الطيارين.. مستعدين للتحليق معاك!</p>
+                <button onclick="addToCart('كوالا طيار أزرق', 18)" class="bg-cyan-600 text-white px-8 py-3 rounded-full font-bold shadow-md hover:bg-cyan-700 transition">أضف كوالا طيار (18 د.ك)</button>
+            </div>
+            <div class="absolute bottom-10 right-10 text-cyan-400">اسحب ليسار لاستكشاف المزيد ⬅️</div>
+        </section>
 
-            <div id="grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <section class="island-section bg-[#fff8e1] border-l-4 border-dashed border-amber-200">
+            <div class="text-center animate__animated animate__fadeIn">
+                <div class="text-9xl mb-10 koala-floating">👷</div>
+                <h2 class="text-4xl font-bold mb-4">موقع الهندسة</h2>
+                <p class="text-amber-900 mb-8 max-w-md mx-auto">هني المهندسين الشطار.. يبنون لك عالم من المرح!</p>
+                <button onclick="addToCart('كوالا مهندس أصفر', 22)" class="bg-amber-600 text-white px-8 py-3 rounded-full font-bold shadow-md hover:bg-amber-700 transition">أضف كوالا مهندس (22 د.ك)</button>
+            </div>
+        </section>
+
+        <section class="island-section bg-[#e8f5e9] border-l-4 border-dashed border-green-200">
+            <div class="text-center animate__animated animate__fadeIn">
+                <div class="text-9xl mb-10 koala-floating">⚓️</div>
+                <h2 class="text-4xl font-bold mb-4">شاطئ البحارة</h2>
+                <p class="text-green-900 mb-8 max-w-md mx-auto">وصلنا للشاطئ.. الكوالا البحارة جاهزين للإبحار!</p>
+                <button onclick="addToCart('كوالا بحار كحلي', 16)" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold shadow-md hover:bg-green-700 transition">أضف كوالا بحار (16 د.ك)</button>
+            </div>
+        </section>
+
+    </div>
+
+    <div id="paymentModal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="toggleCheckout()"></div>
+        <div class="payment-modal rounded-[40px] w-full max-w-md p-10 animate__animated animate__fadeInUp shadow-2xl relative border-t-8 border-cyan-400">
+            <h2 class="text-2xl font-bold mb-8 text-center text-cyan-900 font-serif">K-NET الدفع الآمن بالكويت</h2>
+            <div class="space-y-6">
+                <div class="p-5 border-4 border-blue-200 rounded-3xl flex items-center justify-between cursor-pointer bg-blue-50 hover:border-blue-500 transition-colors">
+                    <span class="font-bold text-blue-900 text-2xl font-serif">K-NET</span>
+                    <div class="text-sm text-gray-500">بطاقة السحب الآلي الكوينية</div>
                 </div>
-        </main>
+                <div class="bg-cyan-50 p-6 rounded-3xl">
+                    <div class="flex justify-between text-sm mb-2 text-cyan-800"><span>مبلغ المشتريات:</span><span id="payAmount">0</span> د.ك</div>
+                    <div class="flex justify-between font-bold text-xl text-cyan-950"><span>المبلغ المستحق:</span><span id="payTotal">0</span> د.ك</div>
+                </div>
+                <button onclick="confirmPayment()" class="w-full bg-cyan-600 text-white py-5 rounded-2xl font-bold text-xl shadow-lg hover:bg-cyan-700 transition">ادفع الآن</button>
+                <button onclick="toggleCheckout()" class="w-full text-gray-400 py-2">إلغاء العملية</button>
+            </div>
+        </div>
     </div>
 
     <script>
+        let cart = [];
+
+        // 1. نظام الحماية
         function checkPass() {
             const input = document.getElementById('pwInput').value;
-            // الباسورد المحفوظ عندك: alinasser
             if(input === 'alinasser') {
                 document.getElementById('lockScreen').style.display = 'none';
                 const site = document.getElementById('mainSite');
                 site.classList.remove('hidden');
                 setTimeout(() => site.style.opacity = '1', 10);
-                loadProducts();
             } else {
                 document.getElementById('error').classList.remove('hidden');
+                document.getElementById('pwInput').classList.add('border-red-500', 'animate__animated', 'animate__shakeX');
+                setTimeout(() => document.getElementById('pwInput').classList.remove('animate__shakeX'), 500);
             }
         }
 
-        function loadProducts() {
-            const jobs = ["طيار", "مهندس", "دكتور", "شيف", "لاعب", "فنان", "بحار", "شرطي", "رائد فضاء", "مدرس"];
-            const grid = document.getElementById('grid');
-            for(let i=1; i<=44; i++) {
-                const job = jobs[i % jobs.length];
-                grid.innerHTML += `
-                    <div class="koala-card animate__animated animate__fadeInUp" style="animation-delay: ${i*0.05}s">
-                        <div class="text-6xl mb-4 bg-amber-50 py-10 rounded-[30px]">🐨</div>
-                        <h3 class="font-bold text-lg">كوالا ${job}</h3>
-                        <p class="text-amber-600 font-bold my-3">15.000 د.ك</p>
-                        <button onclick="add()" class="w-full bg-gray-900 text-white py-3 rounded-xl hover:bg-amber-500 transition">أضف للسلة</button>
+        // 2. نظام السلة
+        function addToCart(name, price) {
+            cart.push({name, price});
+            updateCart();
+            // أنيميشن عند الإضافة للسلة
+            const list = document.getElementById('cartItemsList');
+            list.classList.remove('hidden');
+            setTimeout(() => list.classList.add('hidden'), 2000);
+        }
+
+        function updateCart() {
+            const container = document.getElementById('cartItemsList');
+            const totalDisplay = document.getElementById('cartCount');
+            
+            if(cart.length === 0) {
+                container.innerHTML = `<p class="text-gray-400 text-center text-sm">السلة فاضية..</p>`;
+                totalDisplay.innerText = "0";
+                return;
+            }
+
+            container.innerHTML = cart.map((item, index) => `
+                <div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg basket-item text-xs">
+                    <div>
+                        <p class="font-bold">${item.name}</p>
                     </div>
-                `;
-            }
+                    <span class="text-cyan-600 font-bold">${item.price} د.ك</span>
+                </div>
+            `).join('');
+
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            totalDisplay.innerText = total;
         }
 
-        let count = 0;
-        function add() {
-            count++;
-            document.getElementById('cartCount').innerText = count;
-            alert("تمت الإضافة! تستاهل 🐨✨");
+        // 3. نظام الدفع
+        function toggleCheckout() {
+            if(cart.length === 0) return alert("سلتك فاضية يا الغالي!");
+            const modal = document.getElementById('paymentModal');
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            document.getElementById('payAmount').innerText = total;
+            document.getElementById('payTotal').innerText = total;
+        }
+
+        function confirmPayment() {
+            alert("تمت العملية بنجاح! 🇰🇼✨\nشكراً لزيارتك جزيرة كوالا.. بنوصل لك طلبك بأسرع وقت.");
+            cart = [];
+            updateCart();
+            toggleCheckout();
         }
     </script>
 </body>
