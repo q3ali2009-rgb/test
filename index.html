@@ -3,52 +3,175 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kuwait AI Platform</title>
-<link rel="stylesheet" href="style.css">
+<title>KWT AI Majlis</title>
+<style>
+body{
+font-family:Segoe UI;
+background:#0f0f0f;
+color:white;
+text-align:center;
+margin:0;
+}
+.page{display:none;padding:40px}
+.active{display:block}
+input,button{
+padding:12px;
+margin:10px;
+border-radius:15px;
+border:none;
+}
+button{
+background:#00c853;
+color:black;
+font-weight:bold;
+cursor:pointer;
+}
+.card{
+background:#1e1e1e;
+padding:30px;
+border-radius:20px;
+margin:20px;
+display:inline-block;
+width:220px;
+cursor:pointer;
+transition:0.3s;
+}
+.card:hover{background:#2e2e2e}
+.homeBtn{
+position:fixed;
+bottom:20px;
+right:20px;
+}
+#chatBox{
+height:250px;
+overflow:auto;
+background:#111;
+padding:15px;
+border-radius:15px;
+}
+</style>
 </head>
 <body>
 
 <div id="loginPage" class="page active">
-    <h1>🇰🇼 هلا والله 👋</h1>
-    <p>سجل دخولك يا بطل 🔐</p>
-    <input type="password" id="passwordInput" placeholder="حط الباسورد">
-    <button onclick="login()">دخول</button>
+<h1>🇰🇼 هلا والله</h1>
+<p>سجل دخولك يا وحش 🔐</p>
+<input type="password" id="pass" placeholder="حط الباسورد">
+<button onclick="login()">دخول</button>
 </div>
 
 <div id="mainPage" class="page">
-    <h2 id="welcomeMsg"></h2>
+<h2 id="welcome"></h2>
 
-    <div class="options">
-        <div class="card" onclick="showRecorder()">
-            🎙️ تسجيل المحاضره
-            <p>يلا نسجلها وخلها محفوظة 👌</p>
-        </div>
-
-        <div class="card" onclick="showAI()">
-            🤖 سوالف مع الـ AI
-            <p>فضفض واسأل اللي تبي</p>
-        </div>
-    </div>
-
-    <button class="homeBtn" onclick="goHome()">القائمة الرئيسية</button>
+<div class="card" onclick="goRecord()">
+🎥 تسجيل المحاضره<br>
+<span>سجلها وخلك مرتاح 👌</span>
 </div>
 
-<div id="recorderPage" class="page">
-    <h2>🎧 تسجيل المحاضره</h2>
-    <button onclick="startRecording()">ابدأ التسجيل</button>
-    <button onclick="stopRecording()">وقف التسجيل</button>
-    <audio id="audioPlayback" controls></audio>
-    <button class="homeBtn" onclick="goMain()">القائمة الرئيسية</button>
+<div class="card" onclick="goAI()">
+🤖 سوالف مع AI<br>
+<span>خلنا نبدع 🔥</span>
+</div>
+
+<button class="homeBtn" onclick="goHome()">القائمة الرئيسية</button>
+</div>
+
+<div id="recordPage" class="page">
+<h2>🎥 تسجيل الشاشة</h2>
+<button onclick="startRec()">ابدأ</button>
+<button onclick="stopRec()">وقف</button>
+<br><br>
+<video id="preview" controls width="300"></video>
+<button class="homeBtn" onclick="backMain()">القائمة الرئيسية</button>
 </div>
 
 <div id="aiPage" class="page">
-    <h2>🤖 محادثة AI</h2>
-    <div id="chatBox"></div>
-    <input type="text" id="userInput" placeholder="اكتب سوالفك هنا">
-    <button onclick="sendMessage()">إرسال</button>
-    <button class="homeBtn" onclick="goMain()">القائمة الرئيسية</button>
+<h2>🤖 محادثة AI</h2>
+<div id="chatBox"></div>
+<input id="msg" placeholder="اكتب هنا">
+<button onclick="sendMsg()">إرسال</button>
+<button class="homeBtn" onclick="backMain()">القائمة الرئيسية</button>
 </div>
 
-<script src="script.js"></script>
+<script>
+const password="kw2026";
+
+function login(){
+let input=document.getElementById("pass").value;
+if(input===password){
+let expiry=new Date().getTime()+6*60*60*1000;
+localStorage.setItem("session",expiry);
+showMain();
+}else{
+alert("الباسورد غلط ❌");
+}
+}
+
+function showMain(){
+document.getElementById("loginPage").classList.remove("active");
+document.getElementById("mainPage").classList.add("active");
+document.getElementById("welcome").innerText="حياك 👋 (الكود صالح لمدة ٦ ساعات)";
+}
+
+function checkSession(){
+let expiry=localStorage.getItem("session");
+if(!expiry || new Date().getTime()>expiry){
+alert("انتهت الجلسة ⏳");
+location.reload();
+}
+}
+
+function goRecord(){
+checkSession();
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById("recordPage").classList.add("active");
+}
+
+function goAI(){
+checkSession();
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById("aiPage").classList.add("active");
+}
+
+function backMain(){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById("mainPage").classList.add("active");
+}
+
+function goHome(){
+location.reload();
+}
+
+// تسجيل الشاشة
+let recorder;
+let chunks=[];
+
+async function startRec(){
+const stream=await navigator.mediaDevices.getDisplayMedia({video:true,audio:true});
+recorder=new MediaRecorder(stream);
+recorder.ondataavailable=e=>chunks.push(e.data);
+recorder.onstop=e=>{
+let blob=new Blob(chunks,{type:"video/webm"});
+let url=URL.createObjectURL(blob);
+document.getElementById("preview").src=url;
+chunks=[];
+};
+recorder.start();
+}
+
+function stopRec(){
+recorder.stop();
+}
+
+// AI تجريبي (بدون API)
+function sendMsg(){
+let msg=document.getElementById("msg").value;
+let chat=document.getElementById("chatBox");
+chat.innerHTML+=`<p><b>أنت:</b> ${msg}</p>`;
+chat.innerHTML+=`<p><b>AI:</b> رد ذكي تجريبي 😎</p>`;
+document.getElementById("msg").value="";
+}
+</script>
+
 </body>
 </html>
