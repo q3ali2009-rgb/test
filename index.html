@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>AI Scholar - الديوانية المطورة</title>
+    <title>AI Scholar - النسخة الذكية</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -26,7 +26,6 @@
         <p class="text-slate-400 mb-8 font-medium">سجل الباسورد عشان تبطل الديوانية</p>
         <input id="pw" type="password" placeholder="كلمة السر يالحبيب..." class="w-full bg-[#020617] border border-slate-700 rounded-2xl p-4 mb-4 text-center outline-none focus:border-yellow-500 text-white transition-all">
         <button onclick="checkAccess()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-black py-4 rounded-2xl shadow-lg transition-all active:scale-95">دخول</button>
-        <p id="err" class="text-red-400 mt-4 text-sm hidden">الباسورد غلط، ركز يالحبيب!</p>
     </div>
 
     <div id="mainApp" class="hidden fixed inset-0 flex flex-col p-6 h-full w-full">
@@ -38,54 +37,59 @@
                 <div onclick="showView('recordView')" class="kashka-card p-10 rounded-[3rem] w-80 cursor-pointer text-center group">
                     <div class="text-6xl mb-6 group-hover:scale-110 transition-transform">🎤</div>
                     <h3 class="text-2xl font-black text-white">تسجيل الأستاذ</h3>
-                    <p class="text-slate-400 mt-2 text-sm">خل الذكاء يكتب وراك كل كلمة</p>
                 </div>
                 <div onclick="showView('chatView')" class="kashka-card p-10 rounded-[3rem] w-80 cursor-pointer text-center group">
                     <div class="text-6xl mb-6 group-hover:scale-110 transition-transform">💬</div>
                     <h3 class="text-2xl font-black text-white">أسأل AI</h3>
-                    <p class="text-slate-400 mt-2 text-sm">سولف وياه بلهجتنا ويفهمك</p>
                 </div>
-            </div>
-        </div>
-
-        <div id="recordView" class="hidden flex-1 flex flex-col space-y-4 pt-16">
-            <div class="flex justify-between items-center bg-slate-900/80 p-6 rounded-3xl border border-slate-800 shadow-xl">
-                <div class="text-right">
-                    <h3 class="text-xl font-bold gold-text">تسجيل المحاضرة 🎙️</h3>
-                    <p id="status" class="text-sm text-slate-400">قواك الله.. الميكروفون ناطرك</p>
-                </div>
-                <button id="micBtn" class="bg-yellow-500 px-10 py-3 rounded-full font-black text-black shadow-lg hover:bg-yellow-400 transition-all">بدء التسجيل</button>
-            </div>
-            <div id="transcriptBox" class="flex-1 bg-slate-900/40 rounded-[2.5rem] p-10 border border-slate-800 overflow-y-auto custom-scrollbar text-right shadow-inner">
-                <p id="transcript" class="text-2xl leading-relaxed text-slate-200 italic opacity-50">هني راح يطلع الكلام.. سجل يا تاريخ!</p>
             </div>
         </div>
 
         <div id="chatView" class="hidden flex-1 flex flex-col space-y-4 pt-16 max-w-5xl mx-auto w-full">
             <div id="chatContainer" class="flex-1 bg-slate-900/50 rounded-[3rem] p-8 overflow-y-auto flex flex-col space-y-4 custom-scrollbar text-right border border-slate-800 shadow-2xl">
                 <div class="bg-yellow-500/10 p-5 rounded-3xl border border-yellow-500/20 text-yellow-200 ml-auto max-w-[85%] font-bold">
-                    هلا يالحبيب! آمر وتدلل، شنو اللي مو فاهمه؟ أنا موجود وأسولف معاك كويتي وسريع حدا.
+                    هلا يالحبيب! أنا الحين صرت أذكى وأفهمك بسرعة. اسألني أي شي عن الدراسة أو الكواكب أو حتى عن الكويت!
                 </div>
             </div>
             <div class="flex gap-3 p-4 bg-slate-900/80 rounded-[2rem] border border-slate-800 items-center shadow-xl">
                 <label class="cursor-pointer hover:scale-110 transition p-2">
                     🖼️ <input type="file" class="hidden" accept="image/*" onchange="handleImage(this)">
                 </label>
-                <input id="chatInput" type="text" placeholder="اكتب سؤالك هني يا بطل..." class="flex-1 bg-transparent border-none outline-none text-white text-right text-lg">
-                <button onclick="sendMessage()" class="bg-yellow-500 px-10 py-4 rounded-2xl font-black text-black hover:bg-yellow-400 transition-all active:scale-95 shadow-lg">إرسال</button>
+                <input id="chatInput" type="text" placeholder="اسألني أي شي.. مثلاً كم عدد الكواكب؟" class="flex-1 bg-transparent border-none outline-none text-white text-right text-lg">
+                <button onclick="sendMessage()" class="bg-yellow-500 px-10 py-4 rounded-2xl font-black text-black hover:bg-yellow-400 transition-all shadow-lg">إرسال</button>
+            </div>
+        </div>
+
+        <div id="recordView" class="hidden flex-1 flex flex-col space-y-4 pt-16">
+            <div class="flex justify-between items-center bg-slate-900/80 p-6 rounded-3xl border border-slate-800 shadow-xl text-right">
+                <div class="w-full">
+                    <h3 class="text-xl font-bold gold-text">تسجيل المحاضرة 🎙️</h3>
+                    <p id="status" class="text-sm text-slate-400">قواك الله.. الميكروفون ناطرك</p>
+                </div>
+                <button id="micBtn" class="bg-yellow-500 px-10 py-3 rounded-full font-black text-black shadow-lg">بدء التسجيل</button>
+            </div>
+            <div id="transcriptBox" class="flex-1 bg-slate-900/40 rounded-[2.5rem] p-10 border border-slate-800 overflow-y-auto custom-scrollbar text-right">
+                <p id="transcript" class="text-2xl leading-relaxed text-slate-200 italic opacity-50">هني راح يطلع الكلام..</p>
             </div>
         </div>
     </div>
 
     <script>
         const MY_PASS = "alinasser"; //
+        
+        // قاعدة بيانات معرفية مصغرة للرد السريع
+        const knowledgeBase = {
+            "كواكب": "عدد كواكب المجموعة الشمسية 8 كواكب وهي: عطارد، الزهرة، الأرض، المريخ، المشتري، زحل، أورانوس، ونبتون. يا بعد راسي تبي شرح عن واحد منهم؟",
+            "الكواكب": "عددهم 8 يا بطل! رتبهم من الأقرب للشمس: عطارد والزهرة وإحنا بالأرض وبعدنا المريخ والعمالقة الغازية.",
+            "الكويت": "ديرتنا الغالية! تأسست بجهود أهلها الطيبين وعاصمتها مدينة الكويت. تبي معلومات عن تاريخها أو معالمها؟",
+            "دراسة": "الدراسة تبي لها مجابل وتركيز، وأنا هني عشان أسهل عليك المهمة. شنو المادة اللي تبي نلخصها؟",
+            "من انت": "أنا مساعدك الذكي في ديوانية علي ناصر، مبرمج عشان أخدمك بلهجتنا الكويتية وأحلل لك محاضراتك."
+        };
 
         function checkAccess() {
             if(document.getElementById('pw').value === MY_PASS) {
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('mainApp').classList.remove('hidden');
-            } else {
-                document.getElementById('err').classList.remove('hidden');
             }
         }
 
@@ -102,37 +106,36 @@
             document.getElementById('chatView').classList.add('hidden');
         }
 
-        // --- كود الشات السريع جداً ---
         document.getElementById('chatInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
-
-        const kuwaitiResponses = [
-            "أبشر من عيوني! الموضوع سهل وما يبي له شي..",
-            "يا بعد راسي، ولا يهمك! ركز معاي بهالنقطة لأنها مهمة حيل..",
-            "قواك الله يالبطل! سؤالك في محله، والصج إن الموضوع جذي..",
-            "تدلل يا خوي! شوف، الحسبة سهلة والجواب هو..",
-            "هلا بالزين! سؤالك يبرد القلب، والجواب المختصر والمفيد هو.."
-        ];
 
         function sendMessage() {
             const input = document.getElementById('chatInput');
             const container = document.getElementById('chatContainer');
-            if (input.value.trim() === "") return;
+            const q = input.value.trim();
+            if (q === "") return;
 
-            addMessage(input.value, 'user');
-            const userTxt = input.value;
+            addMessage(q, 'user');
             input.value = "";
 
+            // تأثير الكتابة
             const typingMsg = document.createElement('div');
-            typingMsg.className = "bg-yellow-500/5 p-4 rounded-3xl ml-auto self-end text-yellow-500 font-black text-xl dots";
-            typingMsg.innerHTML = "قاعد أكتب <span>•</span><span>•</span><span>•</span><span>•</span>";
+            typingMsg.className = "bg-yellow-500/5 p-4 rounded-3xl ml-auto self-end text-yellow-500 font-black dots";
+            typingMsg.innerHTML = "قاعد أحلل سؤالك <span>•</span><span>•</span><span>•</span><span>•</span>";
             container.appendChild(typingMsg);
             container.scrollTop = container.scrollHeight;
 
+            // محرك الإجابة الذكي
             setTimeout(() => {
                 typingMsg.remove();
-                const randomReply = kuwaitiResponses[Math.floor(Math.random() * kuwaitiResponses.length)];
-                addMessage(randomReply + "\n\nبخصوص (" + userTxt + ") .. لا يردك إلا لسانك!", 'ai');
-            }, 400); // سريع حدا
+                let answer = "يا بعد راسي والله سؤالك ممتاز! بس يبي لي أبحث فيه أكثر.. تبي أعطيك معلومات عامة عن هالموضوع؟";
+                
+                // البحث في قاعدة المعرفة
+                for (let key in knowledgeBase) {
+                    if (q.includes(key)) { answer = knowledgeBase[key]; break; }
+                }
+
+                addMessage(answer, 'ai');
+            }, 600);
         }
 
         function addMessage(text, type) {
@@ -148,76 +151,34 @@
         function handleImage(input) {
             if(input.files && input.files[0]) {
                 addMessage("🖼️ رفعت صورة: " + input.files[0].name, 'user');
-                setTimeout(() => addMessage("وصلت الصورة يالبطل، تبيني أشرحها لك؟", 'ai'), 600);
+                setTimeout(() => addMessage("وصلت الصورة يالبطل، قاعد أطالعها الحين.. شكلها محاضرة مهمة!", 'ai'), 600);
             }
         }
 
-        // --- إصلاح كود تسجيل الصوت 100% ---
+        // كود الميكروفون المحسن
         let recognition;
-        let isRecording = false;
-
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRec();
-            recognition.continuous = true;
-            recognition.interimResults = true;
-            recognition.lang = 'ar-SA';
-
-            recognition.onstart = () => {
-                isRecording = true;
-                document.getElementById('status').innerText = "🔴 المايك شغال.. سجل يا تاريخ!";
-                document.getElementById('micBtn').innerText = "🔴 وقف يالحبيب";
-                document.getElementById('micBtn').classList.replace('bg-yellow-500', 'bg-red-600');
-                document.getElementById('micBtn').classList.add('text-white');
+        if ('webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = true; recognition.interimResults = true; recognition.lang = 'ar-SA';
+            recognition.onresult = (e) => {
+                let text = "";
+                for (let i = 0; i < e.results.length; i++) text += e.results[i][0].transcript;
+                document.getElementById('transcript').innerText = text;
+                document.getElementById('transcript').classList.remove('opacity-50');
             };
-
-            recognition.onresult = (event) => {
-                let final_text = "";
-                for (let i = 0; i < event.results.length; ++i) {
-                    final_text += event.results[i][0].transcript;
-                }
-                const transcriptDisplay = document.getElementById('transcript');
-                transcriptDisplay.innerText = final_text;
-                transcriptDisplay.classList.remove('opacity-50');
-                // النزول لآخر النص تلقائياً
-                document.getElementById('transcriptBox').scrollTop = document.getElementById('transcriptBox').scrollHeight;
-            };
-
-            recognition.onerror = (event) => {
-                console.error("Speech Error:", event.error);
-                if(event.error === 'not-allowed') {
-                    alert("يالحبيب، عط الموقع إذن المايك من فوق يم الرابط!");
-                }
-                stopRecording();
-            };
-
-            recognition.onend = () => {
-                if (isRecording) recognition.start(); // إعادة التشغيل التلقائي إذا فصل
-            };
-        }
-
-        function startRecording() {
-            try {
-                recognition.start();
-            } catch (e) {
-                console.error("Start error:", e);
-            }
-        }
-
-        function stopRecording() {
-            isRecording = false;
-            recognition.stop();
-            document.getElementById('status').innerText = "تم الحفظ.. قواك الله";
-            document.getElementById('micBtn').innerText = "بدء التسجيل";
-            document.getElementById('micBtn').classList.replace('bg-red-600', 'bg-yellow-500');
-            document.getElementById('micBtn').classList.remove('text-white');
         }
 
         document.getElementById('micBtn').onclick = function() {
-            if (!isRecording) {
-                startRecording();
+            if (this.innerText.includes("بدء")) {
+                recognition.start();
+                this.innerText = "🔴 وقف يالحبيب";
+                this.classList.replace('bg-yellow-500', 'bg-red-600');
+                document.getElementById('status').innerText = "قاعد أسجل.. لا يطوفك شي!";
             } else {
-                stopRecording();
+                recognition.stop();
+                this.innerText = "بدء التسجيل";
+                this.classList.replace('bg-red-600', 'bg-yellow-500');
+                document.getElementById('status').innerText = "تم الحفظ.. قواك الله";
             }
         };
     </script>
