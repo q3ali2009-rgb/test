@@ -1,232 +1,147 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { Mic, MicOff, MessageSquare, BookOpen, Settings, Send, History } from 'lucide-react';
 
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KOALA KW | متجر بني كوالا الفاخر</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;700&display=swap" rel="stylesheet">
-    
-    <style>
-        :root { --gold: #c5a059; --dark: #121418; --accent: #27ae60; }
-        body { font-family: 'Noto Kufi Arabic', sans-serif; background-color: #fcfcfc; overflow-x: hidden; }
-        
-        /* Navbar */
-        .navbar { background: var(--dark); padding: 15px 0; border-bottom: 3px solid var(--gold); }
-        .navbar-brand { color: var(--gold) !important; font-size: 1.8rem; font-weight: 700; }
-        
-        /* Hero Section */
-        .hero { 
-            background: linear-gradient(rgba(18,20,24,0.8), rgba(18,20,24,0.8)), url('https://images.unsplash.com/photo-1551024506-0bccd828d307?q=80&w=1964&auto=format&fit=crop');
-            background-size: cover; background-attachment: fixed;
-            color: white; padding: 120px 0; border-bottom: 5px solid var(--gold);
-        }
+const AIStudentAssistant = () => {
+  const [isRecording, setIsRecording] = useState(false);
+  const [transcript, setTranscript] = useState("");
+  const [chatInput, setChatInput] = useState("");
+  const [messages, setMessages] = useState([
+    { role: 'ai', text: 'أهلاً بك! أنا مساعدك الذكي. سأقوم بتسجيل كلام الأستاذ وتحليله لك.' }
+  ]);
 
-        /* Product Cards */
-        .product-card { 
-            border: none; border-radius: 20px; transition: 0.5s; background: white; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow: hidden; height: 100%;
-        }
-        .product-card:hover { transform: translateY(-15px); box-shadow: 0 20px 40px rgba(197,160,89,0.2); }
-        
-        .img-box { 
-            background: #f8f9fa; padding: 40px; font-size: 85px; text-align: center;
-            transition: 0.5s; cursor: pointer;
-        }
-        .product-card:hover .img-box { transform: scale(1.1) rotate(5deg); }
-        
-        .price { color: var(--accent); font-weight: 800; font-size: 1.3rem; }
-        .btn-add { 
-            background: var(--dark); color: white; border: 2px solid var(--gold); 
-            width: 100%; padding: 12px; border-radius: 12px; font-weight: 600;
-            transition: 0.3s;
-        }
-        .btn-add:hover { background: var(--gold); color: var(--dark); transform: scale(1.05); }
-        
-        /* Cart Sidebar */
-        .offcanvas { background: var(--dark); color: white; border-right: 2px solid var(--gold); }
-        .cart-status { 
-            background: var(--gold); color: var(--dark); padding: 10px 25px; 
-            border-radius: 50px; cursor: pointer; border: none; font-weight: bold;
-            box-shadow: 0 0 15px rgba(197,160,89,0.4);
-        }
+  // إعدادات التعرف على الكلام (Browser Speech API)
+  const recognitionRef = useRef(null);
 
-        /* Payment Modal */
-        .modal-content { border-radius: 25px; border: none; overflow: hidden; }
-        .payment-method { 
-            border: 2px solid #eee; border-radius: 15px; padding: 15px; 
-            cursor: pointer; transition: 0.3s; text-align: center;
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
+      recognitionRef.current.lang = 'ar-SA'; // دعم اللغة العربية
+
+      recognitionRef.current.onresult = (event) => {
+        let currentTranscript = "";
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          currentTranscript += event.results[i][0].transcript;
         }
-        .payment-method:hover { border-color: var(--gold); background: #fef9ef; }
-        .payment-method.active { border-color: var(--gold); background: #fef9ef; box-shadow: 0 0 10px rgba(197,160,89,0.2); }
-    </style>
-</head>
-<body>
+        setTranscript(currentTranscript);
+      };
+    }
+  }, []);
 
-<nav class="navbar navbar-expand-lg sticky-top animate__animated animate__fadeInDown">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="#">KOALA KW 🐨</a>
-        <button class="cart-status animate__animated animate__pulse animate__infinite" data-bs-toggle="offcanvas" data-bs-target="#cart">
-             حقيبة التسوق (<span id="count">0</span>)
-        </button>
-    </div>
-</nav>
+  const toggleRecording = () => {
+    if (isRecording) {
+      recognitionRef.current.stop();
+    } else {
+      recognitionRef.current.start();
+    }
+    setIsRecording(!isRecording);
+  };
 
-<div class="hero text-center">
-    <div class="container" data-aos="zoom-in">
-        <h1 class="display-3 fw-bold animate__animated animate__backInDown">إصدارات كوالا المحدودة 🇰🇼</h1>
-        <p class="lead opacity-75">الفخامة في كل دمية - توصيل ملكي لجميع مناطق الكويت</p>
-    </div>
-</div>
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
 
-<div class="container my-5">
-    <div class="row g-4" id="shop">
+    const newMessages = [...messages, { role: 'user', text: chatInput }];
+    setMessages(newMessages);
+    setChatInput("");
+
+    // هنا يتم الربط مع AI API (مثل OpenAI)
+    setTimeout(() => {
+      setMessages(prev => [...prev, { role: 'ai', text: 'بناءً على ما قاله الأستاذ، الإجابة هي: يتم تعريف هذا المصطلح كجزء من العمليات الحيوية...' }]);
+    }, 1000);
+  };
+
+  return (
+    <div className="flex h-screen bg-gray-900 text-white font-sans dir-rtl" dir="rtl">
+      
+      {/* القائمة الجانبية - Sidebar */}
+      <div className="w-64 bg-gray-800 p-4 flex flex-col border-l border-gray-700">
+        <div className="flex items-center gap-2 mb-8 px-2">
+          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+            <BookOpen size={20} />
+          </div>
+          <h1 className="text-xl font-bold tracking-tight">AI Scholar</h1>
         </div>
-</div>
+        
+        <nav className="flex-1 space-y-2">
+          <button className="flex items-center gap-3 w-full p-3 bg-blue-600/20 text-blue-400 rounded-xl">
+            <MessageSquare size={18} /> المحاضرة الحالية
+          </button>
+          <button className="flex items-center gap-3 w-full p-3 hover:bg-gray-700 rounded-xl transition">
+            <History size={18} /> سجل المحاضرات
+          </button>
+          <button className="flex items-center gap-3 w-full p-3 hover:bg-gray-700 rounded-xl transition">
+            <Settings size={18} /> الإعدادات
+          </button>
+        </nav>
+      </div>
 
-<div class="offcanvas offcanvas-start" id="cart">
-    <div class="offcanvas-header border-bottom border-secondary">
-        <h5 class="fw-bold text-gold" style="color:var(--gold)">حقيبة المشتريات 🛍️</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-    </div>
-    <div class="offcanvas-body d-flex flex-column">
-        <div id="items" class="flex-grow-1"></div>
-        <div class="border-top border-secondary pt-3">
-            <h4 class="d-flex justify-content-between">
-                <span>الإجمالي الكلي:</span>
-                <span style="color:var(--gold)"><span id="total">0.000</span> د.ك</span>
-            </h4>
-            <button class="btn-add py-3 mt-3 fw-bold" onclick="showPayment()">
-                الانتقال للدفع الآمن 🔒
-            </button>
-        </div>
-    </div>
-</div>
+      {/* المحتوى الرئيسي */}
+      <div className="flex-1 flex flex-col">
+        {/* شريط علوي */}
+        <header className="h-16 border-b border-gray-800 flex items-center justify-between px-8 bg-gray-900/50 backdrop-blur">
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-2 text-sm text-gray-400">
+              <span className={`w-2 h-2 rounded-full ${isRecording ? 'bg-red-500 animate-pulse' : 'bg-gray-500'}`}></span>
+              {isRecording ? 'جاري تسجيل كلام الأستاذ...' : 'الميكروفون متوقف'}
+            </span>
+          </div>
+          <button 
+            onClick={toggleRecording}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition ${isRecording ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-600 hover:bg-blue-700'}`}
+          >
+            {isRecording ? <MicOff size={18} /> : <Mic size={18} />}
+            {isRecording ? 'إيقاف التسجيل' : 'بدء التسجيل'}
+          </button>
+        </header>
 
-<div class="modal fade" id="paymentModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-dark">
-            <div class="modal-header bg-light">
-                <h5 class="modal-title fw-bold">بوابة الدفع الإلكترونية 💳</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <main className="flex-1 overflow-hidden flex p-6 gap-6">
+          {/* قسم تفريغ الكلام (Transcript) */}
+          <div className="flex-[2] bg-gray-800/50 rounded-2xl border border-gray-700 p-6 flex flex-col">
+            <h2 className="text-sm font-semibold text-gray-400 uppercase mb-4 tracking-widest">نص المحاضرة المباشر</h2>
+            <div className="flex-1 overflow-y-auto text-lg leading-relaxed text-gray-200">
+              {transcript || "ابدأ التسجيل ليظهر كلام الأستاذ هنا تحريرياً..."}
             </div>
-            <div class="modal-body">
-                <p class="text-center text-muted mb-4">اختر وسيلة الدفع المناسبة لك</p>
-                <div class="row g-3">
-                    <div class="col-6">
-                        <div class="payment-method" onclick="selectPay(this)">
-                            <img src="https://cdn-icons-png.flaticon.com/512/174/174861.png" width="40" class="mb-2"><br>
-                            <b>K-NET</b>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="payment-method" onclick="selectPay(this)">
-                            <img src="https://cdn-icons-png.flaticon.com/512/349/349221.png" width="40" class="mb-2"><br>
-                            <b>VISA/MASTER</b>
-                        </div>
-                    </div>
+          </div>
+
+          {/* قسم الشات (AI Chat) */}
+          <div className="flex-1 bg-gray-800 rounded-2xl border border-gray-700 flex flex-col shadow-2xl">
+            <div className="p-4 border-b border-gray-700 font-bold flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              اسأل الذكاء الاصطناعي
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {messages.map((msg, i) => (
+                <div key={i} className={`flex ${msg.role === 'user' ? 'justify-start' : 'justify-end'}`}>
+                  <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${msg.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-200'}`}>
+                    {msg.text}
+                  </div>
                 </div>
-                <div class="mt-4">
-                    <input type="text" class="form-control mb-2" placeholder="رقم البطاقة">
-                    <div class="row">
-                        <div class="col-6"><input type="text" class="form-control" placeholder="MM/YY"></div>
-                        <div class="col-6"><input type="text" class="form-control" placeholder="CVV"></div>
-                    </div>
-                </div>
-                <button class="btn btn-dark w-100 mt-4 py-3 fw-bold" style="background:var(--accent); border:none;" onclick="confirmPay()">
-                    تأكيد دفع <span id="payAmount"></span> د.ك
+              ))}
+            </div>
+
+            <form onSubmit={handleSendMessage} className="p-4 bg-gray-800 rounded-b-2xl">
+              <div className="relative">
+                <input 
+                  type="text" 
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  placeholder="استفسر عن أي شيء قاله الأستاذ..."
+                  className="w-full bg-gray-900 border border-gray-700 rounded-xl py-3 pr-4 pl-12 focus:outline-none focus:border-blue-500 transition"
+                />
+                <button type="submit" className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition">
+                  <Send size={16} />
                 </button>
-            </div>
-        </div>
+              </div>
+            </form>
+          </div>
+        </main>
+      </div>
     </div>
-</div>
+  );
+};
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<script>
-    AOS.init({ duration: 1000, once: true });
-
-    const products = [
-        { id: 1, name: "كوالا المهندس الكويتي", price: 12.500, emoji: "👷", delay: 100 },
-        { id: 2, name: "كوالا رائد فضاء", price: 15.000, emoji: "👨‍🚀", delay: 200 },
-        { id: 3, name: "كوالا رياضي (أزرق)", price: 9.750, emoji: "⚽", delay: 300 },
-        { id: 4, name: "كوالا بزي التخرج", price: 14.250, emoji: "🎓", delay: 400 },
-        { id: 5, name: "كوالا رجل أعمال", price: 13.000, emoji: "💼", delay: 100 },
-        { id: 6, name: "كوالا الطباخ الماهر", price: 8.500, emoji: "👨‍🍳", delay: 200 },
-        { id: 7, name: "كوالا الطبيب", price: 12.000, emoji: "🩺", delay: 300 },
-        { id: 8, name: "كوالا الشتاء والبر", price: 11.500, emoji: "🧥", delay: 400 },
-        { id: 9, name: "كوالا الرسام المبدع", price: 10.000, emoji: "🎨", delay: 100 },
-        { id: 10, name: "كوالا الغواص", price: 13.500, emoji: "🤿", delay: 200 }
-    ];
-
-    let cart = [];
-
-    function draw() {
-        const shop = document.getElementById('shop');
-        shop.innerHTML = products.map(p => `
-            <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="${p.delay}">
-                <div class="card product-card">
-                    <div class="img-box">🐨${p.emoji}</div>
-                    <div class="card-body text-center">
-                        <h6 class="fw-bold">${p.name}</h6>
-                        <p class="price">${p.price.toFixed(3)} د.ك</p>
-                        <button class="btn-add" onclick="add(${p.id})">أضف للسلة</button>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    function add(id) {
-        const p = products.find(x => x.id === id);
-        cart.push(p);
-        update();
-        // تأثير اهتزاز للسلة عند الإضافة
-        const btn = document.querySelector('.cart-status');
-        btn.classList.add('animate__shakeX');
-        setTimeout(() => btn.classList.remove('animate__shakeX'), 500);
-    }
-
-    function update() {
-        document.getElementById('count').innerText = cart.length;
-        const list = document.getElementById('items');
-        let total = 0;
-        list.innerHTML = cart.map((item, i) => {
-            total += item.price;
-            return `<div class="p-3 mb-2 rounded animate__animated animate__fadeInLeft" style="background:rgba(255,255,255,0.1); border-right:4px solid var(--gold)">
-                <div class="d-flex justify-content-between">
-                    <span>${item.name}</span>
-                    <b style="color:var(--gold)">${item.price.toFixed(3)} د.ك</b>
-                </div>
-            </div>`;
-        }).join('');
-        document.getElementById('total').innerText = total.toFixed(3);
-        document.getElementById('payAmount').innerText = total.toFixed(3);
-    }
-
-    const payModal = new bootstrap.Modal(document.getElementById('paymentModal'));
-
-    function showPayment() {
-        if(cart.length === 0) return alert("سلتك فارغة!");
-        payModal.show();
-    }
-
-    function selectPay(el) {
-        document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
-        el.classList.add('active');
-    }
-
-    function confirmPay() {
-        alert("جاري الاتصال بالبنك... تمت العملية بنجاح! شكراً لثقتك بمتجر بني كوالا.");
-        cart = [];
-        update();
-        payModal.hide();
-    }
-
-    draw();
-</script>
-</body>
-</html>
+export default AIStudentAssistant;
