@@ -3,166 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>جزيرة كوالا | Koala Island 🐨🇰🇼</title>
+    <title>متجر كوالا</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; background: #e0f7fa; overflow-x: hidden; }
-        .island-section { height: 100vh; width: 100vw; flex-shrink: 0; display: flex; align-items: center; justify-content: center; position: relative; }
-        .koala-floating { animation: float 3s ease-in-out infinite; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-        .basket-item { animation: dropIn 0.5s ease-out; }
-        @keyframes dropIn { 0% { opacity: 0; transform: translateY(-50px); } 100% { opacity: 1; transform: translateY(0); } }
-        /* تصميم بوابة الدفع كأنها نافذة بنكية */
-        .payment-modal { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+        body { font-family: 'Tajawal', sans-serif; background-color: #f8f9fa; overflow: hidden; }
+        .sidebar { width: 280px; height: 100vh; position: fixed; right: 0; top: 0; background: white; border-left: 1px solid #eee; z-index: 40; }
+        .main-area { margin-right: 280px; height: 100vh; overflow-y: auto; padding: 40px; }
+        .product-card { background: white; border-radius: 20px; padding: 20px; text-align: center; border: 1px solid #efefef; transition: 0.3s; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
 
-    <div id="lockScreen" class="fixed inset-0 z-[100] bg-[#e0f7fa] flex items-center justify-center p-4">
-        <div class="bg-white/80 p-12 rounded-[50px] shadow-2xl text-center max-w-sm w-full border-8 border-cyan-100 animate__animated animate__jackInTheBox backdrop-blur-md">
-            <div class="text-8xl mb-6">🏝️</div>
-            <h1 class="text-3xl font-bold text-cyan-900 mb-2">حيّاك في الجزيرة!</h1>
-            <p class="text-cyan-700 mb-8">علي، شنو كلمة السر يا الغالي؟</p>
-            <input type="password" id="pwInput" class="w-full p-5 rounded-full bg-cyan-50 border-2 border-cyan-100 outline-none text-center text-xl mb-6 focus:border-cyan-400" placeholder="اكتبها هني">
-            <button onclick="checkPass()" class="w-full bg-cyan-600 text-white py-5 rounded-full font-bold shadow-lg hover:bg-cyan-700 transition active:scale-95 text-xl">دخول الجزيرة</button>
-            <p id="error" class="text-red-500 mt-5 hidden font-bold">أفا.. جرب مرة ثانية!</p>
+    <div id="passwordPage" class="fixed inset-0 z-[100] bg-white flex items-center justify-center">
+        <div class="text-center animate__animated animate__fadeIn">
+            <div class="text-6xl mb-4">🐨</div>
+            <h1 class="text-2xl font-bold mb-6">يا هلا بيك.. منورنا يا الغالي</h1>
+            <p class="mb-4 text-gray-500">ممكن تكتب الباسورد عشان تدخل؟</p>
+            <input type="password" id="passInput" class="border-2 border-gray-200 rounded-xl px-6 py-3 outline-none focus:border-blue-400 text-center" placeholder="اكتب كلمة السر هني">
+            <button onclick="unlockSite()" class="block w-full mt-4 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition">دخول</button>
+            <p id="failMsg" class="text-red-500 mt-4 hidden">أفا.. جرب مرة ثانية!</p>
         </div>
     </div>
 
-    <div id="cartBasket" class="fixed bottom-10 left-10 z-50 bg-white p-6 rounded-[30px] shadow-2xl border-4 border-cyan-100 flex items-center gap-4 cursor-pointer hover:shadow-cyan-100" onclick="toggleCheckout()">
-        <div class="text-5xl">🛒</div>
-        <div>
-            <div class="text-sm text-gray-400">سلتك</div>
-            <div class="text-2xl font-bold text-cyan-800"><span id="cartCount">0</span> د.ك</div>
-        </div>
-        <div id="cartItemsList" class="hidden absolute bottom-24 left-0 bg-white p-5 rounded-2xl shadow-xl border w-64 space-y-2">
-            </div>
-    </div>
-
-    <div id="mainSite" class="hidden h-screen flex overflow-x-auto scroll-smooth">
+    <div id="mainSite" class="hidden flex">
         
-        <section class="island-section bg-[#e0f7fa] border-l-4 border-dashed border-cyan-200">
-            <div class="absolute top-10 right-10 flex items-center gap-2">
-                <span class="text-4xl">🐨</span>
-                <span class="text-xl font-bold">جزيرة كوالا <span class="text-xs text-cyan-500">علي ناصر</span></span>
+        <aside class="sidebar p-6 flex flex-col">
+            <div class="text-2xl font-bold text-blue-600 mb-10 text-center">🐨 متجر كوالا</div>
+            <nav class="space-y-4 flex-1">
+                <a href="#" class="block p-4 rounded-xl bg-blue-50 text-blue-700 font-bold">القائمة الرئيسية</a>
+                <a href="#" class="block p-4 rounded-xl hover:bg-gray-50 transition">حول المنتج</a>
+                <a href="#" class="block p-4 rounded-xl hover:bg-gray-50 transition">سياسة الاسترجاع</a>
+                <a href="#" class="block p-4 rounded-xl hover:bg-gray-50 transition">تواصل معنا</a>
+            </nav>
+            <div class="p-4 bg-gray-50 rounded-xl text-center cursor-pointer" onclick="openCart()">
+                🛒 السلة (<span id="countTop">0</span>)
             </div>
-            <div class="text-center animate__animated animate__fadeIn">
-                <div class="text-9xl mb-10 koala-floating">🧑‍✈️</div>
-                <h2 class="text-4xl font-bold mb-4">قسم الطيران</h2>
-                <p class="text-cyan-800 mb-8 max-w-md mx-auto">استكشف مجموعة الكوالا الطيارين.. مستعدين للتحليق معاك!</p>
-                <button onclick="addToCart('كوالا طيار أزرق', 18)" class="bg-cyan-600 text-white px-8 py-3 rounded-full font-bold shadow-md hover:bg-cyan-700 transition">أضف كوالا طيار (18 د.ك)</button>
-            </div>
-            <div class="absolute bottom-10 right-10 text-cyan-400">اسحب ليسار لاستكشاف المزيد ⬅️</div>
-        </section>
+        </aside>
 
-        <section class="island-section bg-[#fff8e1] border-l-4 border-dashed border-amber-200">
-            <div class="text-center animate__animated animate__fadeIn">
-                <div class="text-9xl mb-10 koala-floating">👷</div>
-                <h2 class="text-4xl font-bold mb-4">موقع الهندسة</h2>
-                <p class="text-amber-900 mb-8 max-w-md mx-auto">هني المهندسين الشطار.. يبنون لك عالم من المرح!</p>
-                <button onclick="addToCart('كوالا مهندس أصفر', 22)" class="bg-amber-600 text-white px-8 py-3 rounded-full font-bold shadow-md hover:bg-amber-700 transition">أضف كوالا مهندس (22 د.ك)</button>
-            </div>
-        </section>
+        <main class="main-area">
+            <header class="mb-10 flex justify-between items-center">
+                <h2 class="text-3xl font-bold">منتجاتنا الحصرية</h2>
+                <div class="text-gray-400">44 منتج متاح</div>
+            </header>
 
-        <section class="island-section bg-[#e8f5e9] border-l-4 border-dashed border-green-200">
-            <div class="text-center animate__animated animate__fadeIn">
-                <div class="text-9xl mb-10 koala-floating">⚓️</div>
-                <h2 class="text-4xl font-bold mb-4">شاطئ البحارة</h2>
-                <p class="text-green-900 mb-8 max-w-md mx-auto">وصلنا للشاطئ.. الكوالا البحارة جاهزين للإبحار!</p>
-                <button onclick="addToCart('كوالا بحار كحلي', 16)" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold shadow-md hover:bg-green-700 transition">أضف كوالا بحار (16 د.ك)</button>
-            </div>
-        </section>
-
+            <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                </div>
+        </main>
     </div>
 
-    <div id="paymentModal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="toggleCheckout()"></div>
-        <div class="payment-modal rounded-[40px] w-full max-w-md p-10 animate__animated animate__fadeInUp shadow-2xl relative border-t-8 border-cyan-400">
-            <h2 class="text-2xl font-bold mb-8 text-center text-cyan-900 font-serif">K-NET الدفع الآمن بالكويت</h2>
-            <div class="space-y-6">
-                <div class="p-5 border-4 border-blue-200 rounded-3xl flex items-center justify-between cursor-pointer bg-blue-50 hover:border-blue-500 transition-colors">
-                    <span class="font-bold text-blue-900 text-2xl font-serif">K-NET</span>
-                    <div class="text-sm text-gray-500">بطاقة السحب الآلي الكوينية</div>
+    <div id="cartModal" class="fixed inset-0 z-[60] bg-black/50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-md p-8 animate__animated animate__fadeInUp">
+            <h2 class="text-2xl font-bold mb-6">سلة المشتريات</h2>
+            <div id="cartItems" class="space-y-4 mb-6 max-h-60 overflow-y-auto border-b pb-4">
                 </div>
-                <div class="bg-cyan-50 p-6 rounded-3xl">
-                    <div class="flex justify-between text-sm mb-2 text-cyan-800"><span>مبلغ المشتريات:</span><span id="payAmount">0</span> د.ك</div>
-                    <div class="flex justify-between font-bold text-xl text-cyan-950"><span>المبلغ المستحق:</span><span id="payTotal">0</span> د.ك</div>
-                </div>
-                <button onclick="confirmPayment()" class="w-full bg-cyan-600 text-white py-5 rounded-2xl font-bold text-xl shadow-lg hover:bg-cyan-700 transition">ادفع الآن</button>
-                <button onclick="toggleCheckout()" class="w-full text-gray-400 py-2">إلغاء العملية</button>
+            <div class="flex justify-between font-bold text-xl mb-6">
+                <span>الإجمالي:</span>
+                <span id="totalPrice">0</span><span> د.ك</span>
             </div>
+            
+            <div class="mb-6">
+                <p class="text-sm text-gray-400 mb-2">اختر طريقة الدفع:</p>
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="border p-2 rounded-lg text-center font-bold text-blue-600 bg-blue-50 text-xs">K-NET</div>
+                    <div class="border p-2 rounded-lg text-center text-xs opacity-50">VISA</div>
+                    <div class="border p-2 rounded-lg text-center text-xs opacity-50">MasterCard</div>
+                </div>
+            </div>
+
+            <button onclick="payNow()" class="w-full bg-green-600 text-white py-4 rounded-2xl font-bold text-lg">توجه إلى بوابة الدفع</button>
+            <button onclick="closeCart()" class="w-full mt-2 text-gray-400">إغلاق</button>
         </div>
     </div>
 
     <script>
         let cart = [];
+        const professions = ["طيار", "مهندس", "دكتور", "شيف", "لاعب", "فنان", "بحار", "شرطي", "رائد فضاء", "مدرس", "ميكانيكي", "رسام", "قاضي", "كاتب"];
 
-        // 1. نظام الحماية
-        function checkPass() {
-            const input = document.getElementById('pwInput').value;
+        // وظيفة الدخول بالباسورد
+        function unlockSite() {
+            const input = document.getElementById('passInput').value;
             if(input === 'alinasser') {
-                document.getElementById('lockScreen').style.display = 'none';
-                const site = document.getElementById('mainSite');
-                site.classList.remove('hidden');
-                setTimeout(() => site.style.opacity = '1', 10);
+                document.getElementById('passwordPage').style.display = 'none';
+                document.getElementById('mainSite').classList.remove('hidden');
+                generateProducts();
             } else {
-                document.getElementById('error').classList.remove('hidden');
-                document.getElementById('pwInput').classList.add('border-red-500', 'animate__animated', 'animate__shakeX');
-                setTimeout(() => document.getElementById('pwInput').classList.remove('animate__shakeX'), 500);
+                document.getElementById('failMsg').classList.remove('hidden');
             }
         }
 
-        // 2. نظام السلة
-        function addToCart(name, price) {
-            cart.push({name, price});
-            updateCart();
-            // أنيميشن عند الإضافة للسلة
-            const list = document.getElementById('cartItemsList');
-            list.classList.remove('hidden');
-            setTimeout(() => list.classList.add('hidden'), 2000);
+        // توليد 44 منتج بالضبط
+        function generateProducts() {
+            const grid = document.getElementById('productsGrid');
+            for(let i=1; i<=44; i++) {
+                const job = professions[i % professions.length];
+                grid.innerHTML += `
+                    <div class="product-card animate__animated animate__fadeInUp">
+                        <div class="text-5xl mb-4 py-8 bg-gray-50 rounded-2xl">🐨</div>
+                        <h3 class="font-bold text-lg">كوالا ${job}</h3>
+                        <p class="text-blue-600 font-bold my-2 text-xl">15.000 د.ك</p>
+                        <button onclick="addToCart('كوالا ${job}', 15)" class="w-full bg-gray-900 text-white py-3 rounded-xl hover:bg-blue-600 transition">إضافة إلى السلة</button>
+                    </div>`;
+            }
         }
 
-        function updateCart() {
-            const container = document.getElementById('cartItemsList');
-            const totalDisplay = document.getElementById('cartCount');
+        function addToCart(name, price) {
+            cart.push({name, price});
+            document.getElementById('countTop').innerText = cart.length;
+            alert("تمت الإضافة بنجاح");
+        }
+
+        function openCart() {
+            const modal = document.getElementById('cartModal');
+            const itemsDiv = document.getElementById('cartItems');
+            const totalDiv = document.getElementById('totalPrice');
+            
+            modal.style.display = 'flex';
             
             if(cart.length === 0) {
-                container.innerHTML = `<p class="text-gray-400 text-center text-sm">السلة فاضية..</p>`;
-                totalDisplay.innerText = "0";
+                itemsDiv.innerHTML = "<p class='text-center text-gray-400'>السلة فارغة</p>";
+                totalDiv.innerText = "0";
                 return;
             }
 
-            container.innerHTML = cart.map((item, index) => `
-                <div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg basket-item text-xs">
-                    <div>
-                        <p class="font-bold">${item.name}</p>
-                    </div>
-                    <span class="text-cyan-600 font-bold">${item.price} د.ك</span>
+            itemsDiv.innerHTML = cart.map(item => `
+                <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl">
+                    <span>${item.name}</span>
+                    <span class="font-bold">${item.price} د.ك</span>
                 </div>
             `).join('');
 
             const total = cart.reduce((sum, item) => sum + item.price, 0);
-            totalDisplay.innerText = total;
+            totalDiv.innerText = total;
         }
 
-        // 3. نظام الدفع
-        function toggleCheckout() {
-            if(cart.length === 0) return alert("سلتك فاضية يا الغالي!");
-            const modal = document.getElementById('paymentModal');
-            modal.classList.toggle('hidden');
-            modal.classList.toggle('flex');
-            const total = cart.reduce((sum, item) => sum + item.price, 0);
-            document.getElementById('payAmount').innerText = total;
-            document.getElementById('payTotal').innerText = total;
+        function closeCart() {
+            document.getElementById('cartModal').style.display = 'none';
         }
 
-        function confirmPayment() {
-            alert("تمت العملية بنجاح! 🇰🇼✨\nشكراً لزيارتك جزيرة كوالا.. بنوصل لك طلبك بأسرع وقت.");
-            cart = [];
-            updateCart();
-            toggleCheckout();
+        function payNow() {
+            if(cart.length === 0) return alert("السلة فارغة!");
+            alert("سيتم توجيهك الآن إلى بوابة دفع K-NET الآمنة.. شكراً لك!");
+            location.reload(); 
         }
     </script>
 </body>
