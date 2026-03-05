@@ -1,1 +1,97 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر كوالا | Koala Store 🐨</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+        body { font-family: 'Tajawal', sans-serif; background-color: #fdfcf0; }
+        .sidebar { background: white; border-left: 1px solid #eee; width: 280px; height: 100vh; position: fixed; right: 0; top: 0; z-index: 10; }
+        .main-content { margin-right: 280px; padding: 40px; }
+        .koala-card { transition: 0.3s; background: white; border-radius: 25px; padding: 20px; text-align: center; border: 1px solid #f0f0f0; }
+        .koala-card:hover { transform: translateY(-10px); shadow: 0 10px 20px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
 
+    <div id="lockScreen" class="fixed inset-0 z-[100] bg-[#fff9e6] flex items-center justify-center">
+        <div class="bg-white p-10 rounded-[40px] shadow-2xl text-center max-w-sm w-full border-4 border-amber-100 animate__animated animate__zoomIn">
+            <div class="text-7xl mb-4">🐨</div>
+            <h1 class="text-2xl font-bold text-amber-900 mb-2">يا هلا بالزيّن!</h1>
+            <p class="text-amber-700 mb-6">منوّرنا.. شنو كلمة السر؟</p>
+            <input type="password" id="pwInput" class="w-full p-4 rounded-2xl border-2 border-amber-50 outline-none text-center text-xl mb-4 focus:border-amber-400" placeholder="اكتبها هني">
+            <button onclick="checkPass()" class="w-full bg-amber-500 text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-amber-600 transition">دخول</button>
+            <p id="error" class="text-red-500 mt-4 hidden">أفا.. الباسورد غلط!</p>
+        </div>
+    </div>
+
+    <div id="mainSite" class="hidden opacity-0 transition-opacity duration-500">
+        <aside class="sidebar p-6 shadow-xl">
+            <div class="text-center mb-10">
+                <span class="text-5xl">🐨</span>
+                <h2 class="text-xl font-bold mt-2">كوالا كويت</h2>
+            </div>
+            <nav class="space-y-4">
+                <div class="p-4 bg-amber-50 rounded-2xl text-amber-700 font-bold cursor-pointer">🏠 القائمة الرئيسية</div>
+                <div class="p-4 hover:bg-gray-50 rounded-2xl cursor-pointer">ℹ️ حول المنتج</div>
+                <div class="p-4 hover:bg-gray-50 rounded-2xl cursor-pointer">📦 طلباتي</div>
+                <div class="p-4 hover:bg-gray-50 rounded-2xl cursor-pointer">📞 اتصل بنا</div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="flex justify-between items-center mb-10">
+                <h2 class="text-3xl font-bold">عائلة الكوالا (44 شخصية)</h2>
+                <div class="bg-white px-6 py-3 rounded-2xl shadow-sm font-bold border">
+                    🛒 السلة: <span id="cartCount" class="text-amber-600">0</span>
+                </div>
+            </header>
+
+            <div id="grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                </div>
+        </main>
+    </div>
+
+    <script>
+        function checkPass() {
+            const input = document.getElementById('pwInput').value;
+            // الباسورد المحفوظ عندك: alinasser
+            if(input === 'alinasser') {
+                document.getElementById('lockScreen').style.display = 'none';
+                const site = document.getElementById('mainSite');
+                site.classList.remove('hidden');
+                setTimeout(() => site.style.opacity = '1', 10);
+                loadProducts();
+            } else {
+                document.getElementById('error').classList.remove('hidden');
+            }
+        }
+
+        function loadProducts() {
+            const jobs = ["طيار", "مهندس", "دكتور", "شيف", "لاعب", "فنان", "بحار", "شرطي", "رائد فضاء", "مدرس"];
+            const grid = document.getElementById('grid');
+            for(let i=1; i<=44; i++) {
+                const job = jobs[i % jobs.length];
+                grid.innerHTML += `
+                    <div class="koala-card animate__animated animate__fadeInUp" style="animation-delay: ${i*0.05}s">
+                        <div class="text-6xl mb-4 bg-amber-50 py-10 rounded-[30px]">🐨</div>
+                        <h3 class="font-bold text-lg">كوالا ${job}</h3>
+                        <p class="text-amber-600 font-bold my-3">15.000 د.ك</p>
+                        <button onclick="add()" class="w-full bg-gray-900 text-white py-3 rounded-xl hover:bg-amber-500 transition">أضف للسلة</button>
+                    </div>
+                `;
+            }
+        }
+
+        let count = 0;
+        function add() {
+            count++;
+            document.getElementById('cartCount').innerText = count;
+            alert("تمت الإضافة! تستاهل 🐨✨");
+        }
+    </script>
+</body>
+</html>
